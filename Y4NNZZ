@@ -1,0 +1,97 @@
+-- Y4NZXC // CANONICAL PUBLIC LOADER
+-- Keep this root file tiny and stable. It always pulls the newest router
+-- with cache-busting so existing public loadstrings never need to change.
+
+if not game:IsLoaded() then
+    game.Loaded:Wait()
+end
+
+local BASE="https://raw.githubusercontent.com/Y4N0ZXC/Y4NZXC-HUB/refs/heads/main/Y4NZXC-HUB"
+local isMM2=game.PlaceId==142823291 or game.GameId==66654135
+local isStealASeed=game.PlaceId==122216176958450 or game.GameId==10764328008
+local isLiftACube=game.PlaceId==109530157755211 or game.GameId==10759860151
+local isStealAnAnimeEgg=game.PlaceId==76377501906469 or game.GameId==10747748563
+local isBreakAndStealAnEgg=game.PlaceId==114326934417838 or game.GameId==10765288803
+local isRideAPet=game.PlaceId==124216119978534 or game.GameId==10035204815
+local isStrengthGrowArm=game.PlaceId==86259628805375 or game.GameId==10310999762
+local isAnimeDice=game.PlaceId==113290951185459 or game.GameId==10708913337
+local isLootToForge=game.PlaceId==118805555015549 or game.GameId==10684750879
+local isLiftRockForEggs=game.PlaceId==76731343328034 or game.GameId==10768316438
+local isThrowFoodForAnimals=game.PlaceId==120219252362013 or game.GameId==10766972131
+local isBikeForEgg=game.PlaceId==74023858073178
+local isStealAPetAndRideIt=game.PlaceId==95168737547508
+
+if isMM2 or isStealASeed or isLiftACube or isStealAnAnimeEgg or isBreakAndStealAnEgg or isRideAPet or isStrengthGrowArm or isAnimeDice or isLootToForge or isLiftRockForEggs or isThrowFoodForAnimals or isBikeForEgg or isStealAPetAndRideIt then
+    local env=(type(getgenv)=="function" and getgenv()) or _G
+    env.__Y4NZXC_PAYLOAD_AUTHORIZED=true
+    _G.__Y4NZXC_PAYLOAD_AUTHORIZED=true
+end
+
+local target
+local chunkName
+
+if isMM2 then
+    target="dist/runtime/games/MM2.lua"
+    chunkName="@Y4NZXC/Game-MM2"
+elseif isStealASeed then
+    target="dist/runtime/games/stealaseed.lua"
+    chunkName="@Y4NZXC/Game-StealASeed"
+elseif isLiftACube then
+    target="dist/runtime/games/liftacube.lua"
+    chunkName="@Y4NZXC/Game-LiftACube"
+elseif isStealAnAnimeEgg then
+    target="dist/runtime/games/StealAnAnimeEgg.lua"
+    chunkName="@Y4NZXC/Game-StealAnAnimeEgg"
+elseif isBreakAndStealAnEgg then
+    target="dist/runtime/games/breakandstealegg.lua"
+    chunkName="@Y4NZXC/Game-BreakAndStealAnEgg"
+elseif isRideAPet then
+    target="dist/runtime/games/rideapet.lua"
+    chunkName="@Y4NZXC/Game-RideAPet"
+elseif isStrengthGrowArm then
+    target="dist/runtime/games/+1strengthgrowarm.lua"
+    chunkName="@Y4NZXC/Game-StrengthGrowArm"
+elseif isAnimeDice then
+    target="dist/runtime/games/animedice.lua"
+    chunkName="@Y4NZXC/Game-AnimeDice"
+elseif isLootToForge then
+    target="dist/runtime/games/loottoforge.lua"
+    chunkName="@Y4NZXC/Game-LootToForge"
+elseif isLiftRockForEggs then
+    target="dist/runtime/games/LiftRockForEggs.lua"
+    chunkName="@Y4NZXC/Game-LiftRockForEggs"
+elseif isThrowFoodForAnimals then
+    target="dist/runtime/games/1.lua"
+    chunkName="@Y4NZXC/Game-ThrowFoodForAnimals"
+elseif isBikeForEgg then
+    target="dist/runtime/games/2.lua"
+    chunkName="@Y4NZXC/Game-BikeForEgg"
+elseif isStealAPetAndRideIt then
+    target="dist/runtime/games/3.lua"
+    chunkName="@Y4NZXC/Game-StealAPetAndRideIt"
+else
+    target="dist/loader.lua"
+    chunkName="@Y4NZXC/CurrentLoader"
+end
+
+local url=BASE..target.."?cb="..tostring(os.time())..tostring(math.random(100000,999999))
+
+local ok,source=pcall(function()
+    return game:HttpGet(url,true)
+end)
+
+if not ok or type(source)~="string" or source=="" then
+    error("[Y4NZXC] Current loader is unavailable. Try again in a moment.",0)
+end
+
+local fn,err=loadstring(source,chunkName)
+source=nil
+
+if not fn then
+    error("[Y4NZXC] Loader compile failed: "..tostring(err),0)
+end
+
+-- Run the selected Y4NZXC payload.
+local results=table.pack(fn())
+
+return table.unpack(results,1,results.n)
